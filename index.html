@@ -3,59 +3,70 @@
 <head>
     <title>Telegram Mini App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <style>
-        body { font-family: Arial; padding: 20px; text-align: center; }
-        button { background: #0088cc; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; margin: 10px; }
-        pre { background: #f5f5f5; padding: 10px; text-align: left; }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-    <h1>📱 Telegram Mini App</h1>
-    <p>API: http://biv94xyyu.localto.net:7048</p>
-    
-    <button onclick="testAPI()">🔍 Проверить API</button>
-    <button onclick="showInTelegram()">📨 Отправить в Telegram</button>
-    
-    <div id="result"></div>
-    
     <script>
+        // Ваш API endpoint через CORS прокси
+        const API_URL = 'http://biv94xyyu.localto.net:7048';
+        
+        // Telegram Web App инициализация
         const tg = window.Telegram.WebApp;
         tg.expand();
         tg.ready();
         
-        let lastData = null;
-        
-        async function testAPI() {
-            try {
-                // Используем CORS прокси
-                const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent('http://biv94xyyu.localto.net:7048')}`;
-                const response = await fetch(proxyUrl);
-                lastData = await response.json();
-                
-                document.getElementById('result').innerHTML = 
-                    `<h3>✅ Данные получены:</h3>
-                     <pre>${JSON.stringify(lastData, null, 2)}</pre>`;
-            } catch(error) {
-                document.getElementById('result').innerHTML = 
-                    `<h3>❌ Ошибка:</h3><p>${error.message}</p>`;
-            }
-        }
-        
-        function showInTelegram() {
-            if (lastData) {
+        // Автоматически тестируем соединение
+        fetchWithCors(API_URL)
+            .then(data => {
+                // Отправляем данные в Telegram
                 tg.sendData(JSON.stringify({
-                    type: 'api_data',
-                    data: lastData,
-                    timestamp: new Date().toISOString()
+                    type: 'api_response',
+                    data: data,
+                    status: 'success'
                 }));
-                alert('Данные отправлены в Telegram!');
-            } else {
-                alert('Сначала получите данные!');
-            }
-        }
+                
+                // Показываем в интерфейсе
+                document.body.innerHTML = `
+                    <h1>✅ API подключен!</h1>
+                    <p>Endpoint: ${API_URL}</p>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                    <button onclick="tg.close()">Закрыть</button>
+                `;
+            })
+            .catch(error => {
+                document.body.innerHTML = `
+                    <h1>❌ Ошибка подключения</h1>
+                    <p>${error.message}</p>
+                    <button onclick="location.reload()">Повторить</button>
+                `;
+            });
         
-        // Авто-проверка при загрузке
-        testAPI();
+        // Функция для обхода CORS через публичные прокси
+        async function fetchWithCors(url) {
+            // Попробуем несколько публичных CORS прокси
+            const proxies = [
+                `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+                `https://corsproxy.io/?${encodeURIComponent(url)}`,
+                `https://api.codetabs.com/v1/proxy?quest=${url}`
+            ];
+            
+            for (const proxyUrl of proxies) {
+                try {
+                    const response = await fetch(proxyUrl, {
+                        headers: {
+                            'Accept': 'application/json'
+                        }
+                    });
+                    if (response.ok) {
+                        return await response.json();
+                    }
+                } catch (e) {
+                    console.log(`Прокси ${proxyUrl} не сработал:`, e);
+                }
+            }
+            
+            throw new Error('Все прокси не сработали');
+        }
     </script>
 </body>
 </html>
