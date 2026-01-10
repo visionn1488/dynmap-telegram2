@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Telegram Mini App</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <script>
+        // Ваш API endpoint через CORS прокси
+        const API_URL = 'http://biv94xyyu.localto.net:7048';
+        
+        // Telegram Web App инициализация
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.ready();
+        
+        // Автоматически тестируем соединение
+        fetchWithCors(API_URL)
+            .then(data => {
+                // Отправляем данные в Telegram
+                tg.sendData(JSON.stringify({
+                    type: 'api_response',
+                    data: data,
+                    status: 'success'
+                }));
+                
+                // Показываем в интерфейсе
+                document.body.innerHTML = `
+                    <h1>✅ API подключен!</h1>
+                    <p>Endpoint: ${API_URL}</p>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                    <button onclick="tg.close()">Закрыть</button>
+                `;
+            })
+            .catch(error => {
+                document.body.innerHTML = `
+                    <h1>❌ Ошибка подключения</h1>
+                    <p>${error.message}</p>
+                    <button onclick="location.reload()">Повторить</button>
+                `;
+            });
+        
+        // Функция для обхода CORS через публичные прокси
+        async function fetchWithCors(url) {
+            // Попробуем несколько публичных CORS прокси
+            const proxies = [
+                `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+                `https://corsproxy.io/?${encodeURIComponent(url)}`,
+                `https://api.codetabs.com/v1/proxy?quest=${url}`
+            ];
+            
+            for (const proxyUrl of proxies) {
+                try {
+                    const response = await fetch(proxyUrl, {
+                        headers: {
+                            'Accept': 'application/json'
+                        }
+                    });
+                    if (response.ok) {
+                        return await response.json();
+                    }
+                } catch (e) {
+                    console.log(`Прокси ${proxyUrl} не сработал:`, e);
+                }
+            }
+            
+            throw new Error('Все прокси не сработали');
+        }
+    </script>
+</body>
+</html>
