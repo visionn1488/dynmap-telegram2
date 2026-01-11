@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
-    <meta http-equiv="refresh" content="0; url=https://bcys7ydqk1a6.share.zrok.io">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="0; url=https://pbe32x3qq9ah.share.zrok.io">
     <title>Minecraft Dynmap</title>
     <style>
         body {
-            font-family: Arial;
+            font-family: Arial, sans-serif;
             text-align: center;
             padding: 50px;
             background: #1a1a2e;
@@ -16,23 +18,52 @@
             padding: 30px;
             border-radius: 15px;
             display: inline-block;
+            margin-top: 50px;
+        }
+        .url {
+            background: #0f3460;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-family: monospace;
+            font-size: 16px;
+            word-break: break-all;
         }
         a {
             color: #4ecca3;
             text-decoration: none;
-            font-weight: bold;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4ecca3;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>🌍 Minecraft Dynmap</h1>
-        <p>Перенаправление на карту...</p>
-        <p><a href="https://bcys7ydqk1a6.share.zrok.io">https://bcys7ydqk1a6.share.zrok.io</a></p>
-        <p><small>11.01.2026 16:16</small></p>
+        <div class="loader"></div>
+        <p>Перенаправление на карту сервера...</p>
+        <div class="url">
+            <a href="https://pbe32x3qq9ah.share.zrok.io">https://pbe32x3qq9ah.share.zrok.io</a>
+        </div>
+        <p>Если не сработало, нажмите на ссылку выше</p>
+        <p><small>Обновлено: 11.01.2026 16:17</small></p>
     </div>
+    
     <script>
-        setTimeout(() => window.location.href = "https://bcys7ydqk1a6.share.zrok.io", 2000);
+        setTimeout(function() {
+            window.location.href = "https://pbe32x3qq9ah.share.zrok.io";
+        }, 3000);
     </script>
 </body>
 </html>
